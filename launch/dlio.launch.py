@@ -18,10 +18,16 @@ from launch_ros.substitutions import FindPackageShare
 def generate_launch_description():
     current_pkg = FindPackageShare('direct_lidar_inertial_odometry')
 
+    # Load parameters
+    default_yaml_path = PathJoinSubstitution([current_pkg, 'cfg', 'dlio.yaml'])
+    default_params_yaml_path = PathJoinSubstitution([current_pkg, 'cfg', 'params.yaml'])
+
     # Set default arguments
     rviz = LaunchConfiguration('rviz', default='false')
     pointcloud_topic = LaunchConfiguration('pointcloud_topic', default='points_raw')
     imu_topic = LaunchConfiguration('imu_topic', default='imu_raw')
+    dlio_yaml_path = LaunchConfiguration('dlio_yaml_path', default=default_yaml_path)
+    dlio_params_yaml_path = LaunchConfiguration('dlio_params_yaml_path', default=default_params_yaml_path)
 
     # Define arguments
     declare_rviz_arg = DeclareLaunchArgument(
@@ -39,16 +45,23 @@ def generate_launch_description():
         default_value=imu_topic,
         description='IMU topic name'
     )
-
-    # Load parameters
-    dlio_yaml_path = PathJoinSubstitution([current_pkg, 'cfg', 'dlio.yaml'])
-    dlio_params_yaml_path = PathJoinSubstitution([current_pkg, 'cfg', 'params.yaml'])
+    declare_dlio_yaml_path_arg = DeclareLaunchArgument(
+        'dlio_yaml_path',
+        default_value='',
+        description='Path to DLIO configuration file'
+    )
+    declare_dlio_params_yaml_path_arg = DeclareLaunchArgument(
+        'dlio_params_yaml_path',
+        default_value='',
+        description='Path to DLIO parameters file'
+    )
 
     # DLIO Odometry Node
     dlio_odom_node = Node(
         package='direct_lidar_inertial_odometry',
         executable='dlio_odom_node',
         output='screen',
+        prefix=['nice -n 20']
         parameters=[dlio_yaml_path, dlio_params_yaml_path],
         remappings=[
             ('pointcloud', pointcloud_topic),
@@ -88,6 +101,8 @@ def generate_launch_description():
         declare_rviz_arg,
         declare_pointcloud_topic_arg,
         declare_imu_topic_arg,
+        declare_dlio_yaml_path_arg,
+        declare_dlio_params_yaml_path_arg,
         dlio_odom_node,
         dlio_map_node,
         rviz_node
