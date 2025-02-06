@@ -61,7 +61,7 @@ def generate_launch_description():
         package='direct_lidar_inertial_odometry',
         executable='dlio_odom_node',
         output='screen',
-        prefix=['nice -n 20']
+        prefix=['nice -n 20'],
         parameters=[dlio_yaml_path, dlio_params_yaml_path],
         remappings=[
             ('pointcloud', pointcloud_topic),
