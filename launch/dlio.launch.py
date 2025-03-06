@@ -87,7 +87,7 @@ def generate_launch_description():
     )
 
     # RViz node
-    rviz_config_path = PathJoinSubstitution([current_pkg, 'launch', 'dlio.rviz'])
+    rviz_config_path = PathJoinSubstitution([current_pkg, 'launch', 'video.rviz'])
     rviz_node = Node(
         package='rviz2',
         executable='rviz2',
