@@ -9,7 +9,7 @@
 #
 
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument
+from launch.actions import DeclareLaunchArgument, TimerAction, Shutdown
 from launch.conditions import IfCondition   
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
@@ -61,6 +61,9 @@ def generate_launch_description():
         package='direct_lidar_inertial_odometry',
         executable='dlio_odom_node',
         output='screen',
+        on_exit=[TimerAction(
+            period=10.0,
+            actions=[Shutdown()])],
         prefix=['nice -n 20'],
         parameters=[dlio_yaml_path, dlio_params_yaml_path],
         remappings=[
