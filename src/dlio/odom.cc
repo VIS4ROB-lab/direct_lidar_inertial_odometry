@@ -694,7 +694,11 @@ void dlio::OdomNode::deskewPointcloud() {
     extract_point_time = [&sweep_ref_time](
                              boost::range::index_value<PointType&, long> pt,
                              boost::range::index_value<PointType&, long> pt0) {
-      return sweep_ref_time + (pt.value().time - pt0.value().time) * 1e-6f;
+      if (pt.value().time < 1.0) {
+        return sweep_ref_time + pt.value().time;
+      } else {
+        return sweep_ref_time + (pt.value().time - pt0.value().time) * 1e-6f;
+      }
     };
 
   } else if (this->sensor == dlio::SensorType::HESAI) {
